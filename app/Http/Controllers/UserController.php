@@ -2,32 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class TaskController extends Controller
+class UserController extends Controller
 {
     /**
-     * Display a listing of the reso    urce.
+     * Display a listing of the resource.
      */
     public function index()
     {
-        $tasks = Task::all();
-        $users = User::all();
-        return view('tasks.index', compact('tasks', 'users'));
+        $users = User::with('roles')->get();
+        return View('admin.users.index', [
+            "users" => $users
+        ]);
     }
-
-    public function assign(Request $request, $id)
-{
-    $task = Task::findOrFail($id);
-    $user = User::find($request->assignee);
-    $task->assignee = $user ? $user->name : null;
-    $task->save();
-
-    return back()->with('success', 'Tâche assignée avec succès.');
-}
-
 
     /**
      * Show the form for creating a new resource.
@@ -56,17 +45,24 @@ class TaskController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
-        //
+        return view('admin.users.edit', compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+        ]);
+
+        $user->update($validated);
+
+        return redirect()->route('admin.users.index')->with('success', 'Utilisateur mis à jour.');
     }
 
     /**

@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
-            $table->enum('status', ['non débuté', 'en cours', 'terminé'])->default('non commencé');
-            $table->enum('priority', ['non débuté', 'en cours', 'terminé'])->default('non commencé');
+            $table->enum('status', ['non commencé', 'en cours', 'terminé'])->default('non commencé');
             $table->enum('priority', ['urgente', 'pas urgente']);
             $table->foreignId('project_id')->constrained()->onDelete('cascade');
             $table->foreignId('assigned_to')->nullable()->constrained('users')->onDelete('set null');
